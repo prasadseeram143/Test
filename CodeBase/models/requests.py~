@@ -1,0 +1,84 @@
+from cloudcafe.brm.models.base import BaseBRM
+
+
+class Main(BaseBRM):
+    '''
+    This is the request class for the Create Customer API.
+    The request payload is converted from an object to String
+    format to aid serialization of request.
+    '''
+    def __init__(self, locale=None, ip=None, obj_type=None, obj_id=None,
+                 rev_no=None, pay_type=None, debit_exp=None, debit_num=None,
+                 name=None):
+        self.locale = locale
+        self.ip = ip
+        self.obj_type = obj_type
+        self.obj_id = obj_id
+        self.rev_no = rev_no
+        self.pay_type = pay_type
+        self.debit_exp = debit_exp
+        self.debit_num = debit_num
+        self.name = name
+
+    def _obj_to_dict(self):
+	'''
+	From this function we will return a text file which consists Customer Information. 
+	We will append the returned string from other classes to the text file.  	
+	'''
+        file_data = open('new', 'w')
+        locales = Locales()._obj_to_dict(self.locale)
+        payinfo = PayInfo(). _obj_to_dict(self.ip, self.obj_type, self.obj_id,
+                                            self.rev_no,self. pay_type,
+                                            self.debit_exp, self.debit_num,
+                                            self.name)
+	# We will append the above string to the file.
+	# file_data.write(locales)
+	# file_data.wrire(payinfo).....etc
+        print locales + "\n" + payinfo
+        pass
+
+class Locales(BaseBRM):
+    '''
+    This is the request class for the Create Customer API.
+    The request payload is converted from an object to String
+    format to aid serialization of request.
+    '''
+    def __init__(self, strng=None):
+        self.strng = strng
+
+
+    def _obj_to_dict(self, locale):
+	'''
+	This function will return a string to the MAIN class, where the string appending to the file.
+	'''
+        strng = '''0 PIN_FLD_LOCALES                  ARRAY [1] allocated 1, used 1
+1     PIN_FLD_LOCALE                 STR [0] {locale}'''
+        strng = (strng).format(locale = locale)
+        return strng
+
+class PayInfo(BaseBRM):
+    '''
+    This is the request class for the Create Customer API.
+    The request payload is converted from an object to String
+    format to aid serialization of request.
+    '''
+    def __init__(self, strng=None):
+        self.strng = strng
+
+
+    def _obj_to_dict(self, ip, obj_type, obj_id, rev_no, pay_type, debit_exp,
+                    debit_num, name):
+	''' This function will return a string to the Main Class'''
+        strng = '''0 PIN_FLD_PAYINFO                  ARRAY [0] allocated 3, used 3
+1     PIN_FLD_POID                  POID [0] {ip} {obj_type} {obj_id} {rev_no}
+1     PIN_FLD_PAY_TYPE              ENUM [0] {pay_type}
+1     PIN_FLD_INHERITED_INFO   SUBSTRUCT [0] allocated 1, used 1
+2         PIN_FLD_CC_INFO          ARRAY [0] allocated 3, used 3
+3             PIN_FLD_DEBIT_EXP      STR [0] "{debit_exp}"
+3             PIN_FLD_DEBIT_NUM      STR [0] "{debit_num}"
+3             PIN_FLD_NAME           STR [0] "{name}"'''
+        strng = (strng).format(ip = ip, obj_type = obj_type, obj_id = obj_id,
+                                rev_no = rev_no, pay_type = pay_type,
+                                debit_exp = debit_exp, debit_num = debit_num,
+                                name = name)
+        return strng
